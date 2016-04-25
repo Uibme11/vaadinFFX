@@ -43,6 +43,9 @@ public class JobForm extends GridLayout {
 	private NativeSelect aminoAcidChange = new NativeSelect("Amino Acid Change");
 	private String[] aminoAcids = {"ALA", "ARG", "ASN", "ASP", "CYS", "GLU", "GLN", "GLY", "HIS", "ILE", 
 			"LEU", "LYS", "MET", "PHE", "PRO", "SER", "THR", "TRP", "TYR", "VAL"};
+	private Button jobNameHelp = new Button();
+	private Button emailHelp = new Button();
+	private Button fileHelp = new Button();
 	private Button commandHelp = new Button();
 	private Button save = new Button("Save");
 	private Button clear = new Button("Clear");
@@ -99,13 +102,18 @@ public class JobForm extends GridLayout {
 		save.setClickShortcut(KeyCode.ENTER);
 		
 		// Informational icons
-		commandHelp.setIcon(FontAwesome.INFO_CIRCLE);
-		commandHelp.setStyleName(BaseTheme.BUTTON_LINK);
-        commandHelp.setDescription("Please visit http://ffx.biochem.uiowa.edu for command descriptions.");        
+		jobNameHelp = helpButtonGenerator(jobNameHelp, "Please enter a job name using letters, numbers, dashes, or underscores.");
+        emailHelp = helpButtonGenerator(emailHelp, "Please enter an email address to which the results can be sent.");
+        fileHelp = helpButtonGenerator(commandHelp, "Please select a PDB on which to perform the FFX job.");
+        commandHelp = helpButtonGenerator(commandHelp, "Please visit http://ffx.biochem.uiowa.edu for command descriptions.");
+        
 		
         // (col1, row1) (col2, row2)
 		addComponent(jobName);
 		setSpacing(true);
+		addComponent(jobNameHelp, 1, 0);
+		setSpacing(true);
+		setComponentAlignment(jobNameHelp, Alignment.BOTTOM_LEFT);
 		addComponent(email, 0, 1);
 		setSpacing(true);
 		addComponent(file, 0, 2);
@@ -122,7 +130,15 @@ public class JobForm extends GridLayout {
 		addComponent(chain, 0, 5);
 		setSpacing(true);
 		addComponent(aminoAcidChange, 0, 6);
+		aminoAcidChange.setWidth("100%");
 		setSpacing(true);
 		
+	}
+	
+	public Button helpButtonGenerator(Button button, String prompt){
+		commandHelp.setIcon(FontAwesome.INFO_CIRCLE);
+		button.setStyleName(BaseTheme.BUTTON_LINK);
+		button.setDescription(prompt); 
+		return button;
 	}
 }

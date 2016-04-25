@@ -13,11 +13,13 @@ import com.vaadin.data.validator.NullValidator;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeSelect;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -38,18 +40,23 @@ public class MyUI extends UI {
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
-        final VerticalLayout layout = new VerticalLayout();
         
-        layout.addComponent(form);
+    	VerticalLayout layout = new VerticalLayout();
+    	//Label title = new Label("Force Field X");
+    	//layout.addComponent(title);
+    	//layout.setComponentAlignment(title, Alignment.MIDDLE_CENTER);
         
-        
-        
+    	layout.addComponent(form);
+    	layout.setComponentAlignment(form, Alignment.MIDDLE_CENTER);
+       
+    	// Bind information entered into single Job item
         final FieldGroup binder = new FieldGroup();
         BeanItem<Job> item = new BeanItem<Job>(job);
         binder.setItemDataSource(item);
         
         binder.bindMemberFields(form);
         
+        // When save button is pressed, save user input into Job BeanItem
         Button save = new Button("Save");
         save.addClickListener(e -> {
         	try {
@@ -62,6 +69,7 @@ public class MyUI extends UI {
         
         layout.addComponent(save);
         layout.setSpacing(true);
+        layout.setComponentAlignment(save, Alignment.MIDDLE_CENTER);
         
         setContent(layout);
     }
