@@ -2,6 +2,7 @@ package my.vaadin.ffx;
 
 import javax.servlet.annotation.WebServlet;
 import ffx.numerics.Erf;
+import ffx.Main;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Widgetset;
@@ -60,6 +61,7 @@ public class MyUI extends UI {
         Button save = new Button("Save");
         save.addClickListener(e -> {
         	try {
+                        Main.main(null);
         		double result = ffx.numerics.Erf.erfc(1.00);
         		System.out.printf("XXXXXXX %f", result);
         		//Runtime.getRuntime().exec(command);

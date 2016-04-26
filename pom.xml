@@ -58,6 +58,11 @@
                         <artifactId>numerics</artifactId>
                         <version>1.0.0-beta</version>
                 </dependency>
+                <dependency>
+                        <groupId>edu.uiowa.eng.ffx</groupId>
+                        <artifactId>ui</artifactId>
+                        <version>1.0.0-beta</version>
+                </dependency>
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-server</artifactId>
