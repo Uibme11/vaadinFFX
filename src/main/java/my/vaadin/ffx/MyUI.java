@@ -2,7 +2,9 @@ package my.vaadin.ffx;
 
 import javax.servlet.annotation.WebServlet;
 import ffx.numerics.Erf;
-import ffx.Main;
+
+
+//import ffx.Main;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Widgetset;
@@ -12,15 +14,19 @@ import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.data.validator.IntegerRangeValidator;
 import com.vaadin.data.validator.NullValidator;
 import com.vaadin.server.FontAwesome;
+import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
+import com.vaadin.shared.Position;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeSelect;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -38,6 +44,7 @@ public class MyUI extends UI {
 	
 	private JobForm form = new JobForm();
 	private Job job = new Job();
+	private TextArea resultField = new TextArea();
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
@@ -58,12 +65,21 @@ public class MyUI extends UI {
         binder.bindMemberFields(form);
         
         // When save button is pressed, save user input into Job BeanItem
-        Button save = new Button("Save");
+        Button save = new Button("Submit");
         save.addClickListener(e -> {
         	try {
-                        Main.main(null);
+                        //Main.main();
+        		Notification notif = new Notification("Thank you!", "Your FFX job has been launched.", Notification.TYPE_WARNING_MESSAGE);
+        		notif.setPosition(Position.BOTTOM_RIGHT);
+        		notif.show(Page.getCurrent());
         		double result = ffx.numerics.Erf.erfc(1.00);
         		System.out.printf("XXXXXXX %f", result);
+        		
+//        		resultField.setCaption("results print here");
+//        		layout.addComponent(resultField);
+        		
+        		
+        		
         		//Runtime.getRuntime().exec(command);
 				binder.commit();
 			} catch (Exception e1) {
