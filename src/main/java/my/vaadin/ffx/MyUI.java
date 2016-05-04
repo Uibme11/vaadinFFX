@@ -4,7 +4,7 @@ import javax.servlet.annotation.WebServlet;
 import ffx.numerics.Erf;
 
 
-//import ffx.Main;
+import ffx.Main;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Widgetset;
@@ -44,7 +44,6 @@ public class MyUI extends UI {
 	
 	private JobForm form = new JobForm();
 	private Job job = new Job();
-	private TextArea resultField = new TextArea();
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
@@ -68,20 +67,22 @@ public class MyUI extends UI {
         Button save = new Button("Submit");
         save.addClickListener(e -> {
         	try {
-                        //Main.main();
+                
+        		//double result = ffx.numerics.Erf.erfc(1.00);
+        		//System.out.printf("XXXXXXX %f", result);
+        		
+        		Label resultField = new Label("Results:\nPrint Here!");
+        		layout.addComponent(resultField);
+        		
         		Notification notif = new Notification("Thank you!", "Your FFX job has been launched.", Notification.TYPE_WARNING_MESSAGE);
         		notif.setPosition(Position.BOTTOM_RIGHT);
         		notif.show(Page.getCurrent());
-        		double result = ffx.numerics.Erf.erfc(1.00);
-        		System.out.printf("XXXXXXX %f", result);
         		
-//        		resultField.setCaption("results print here");
-//        		layout.addComponent(resultField);
+        		//String[] command = {"energy", "-Djava.awt.headless=\"true\"", "2QKI"};
+        		//Main.main(command);
         		
-        		
-        		
-        		//Runtime.getRuntime().exec(command);
 				binder.commit();
+				
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();

@@ -35,9 +35,9 @@ public class JobForm extends GridLayout {
 	private TextField jobName = new TextField("Job Name");
 	private TextField email = new TextField("Email");
 	private NativeSelect file = new NativeSelect("File");
-	private String[] fileOptions = {"file1.pdb", "file2.pdb"};
+	private String[] fileOptions = {"5F07 (C3b)", "2QKI (C3c and compstatin)", "1A1P (compstatin)"};
 	private NativeSelect command = new NativeSelect("Command");
-	private String[] commandOptions = {"Energy", "Mutation"};
+	private String[] commandOptions = {"Energy", "MutatePDB", "Minimize"};
 	private TextField aminoAcidPosition = new TextField("Amino Acid Position");
 	private TextField chain = new TextField("Chain");
 	private NativeSelect aminoAcidChange = new NativeSelect("Amino Acid Change");
