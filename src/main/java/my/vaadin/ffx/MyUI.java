@@ -34,6 +34,7 @@ import com.vaadin.ui.TextArea;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 
 /**
  * This UI is the application entry point. A UI may either represent a browser window 
@@ -50,35 +51,40 @@ public class MyUI extends UI {
 	private MutatePDBForm mutatePDBForm = new MutatePDBForm();
 	private Job job = new Job();
 	private String previousCommandSelection = "";
-	String commandSelection = "";
+	private String commandSelection = "";
+	String pdbWebAddress = "http://www.rcsb.org/pdb/home/home.do";
+	BrowserFrame displayPDBProfile = new BrowserFrame();
 	private String previousFileSelection = "";
-	boolean mutatePDBExists = true;
+	private String aminoAcidSelection = "";
+	private Window resultWindow = new Window();
+	VerticalLayout subContent = new VerticalLayout();
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         GridLayout grid = new GridLayout(2, 4);
-    	VerticalLayout layout = new VerticalLayout();
     	
+        // Title for form
     	Label title = new Label("Welcome to Force Field X");
     	title.setStyleName("extra large");
     	grid.addComponent(title, 0, 0);
     	grid.setComponentAlignment(title, Alignment.MIDDLE_CENTER);
     	grid.setMargin(true);
         
-    	//Label title = new Label("Force Field X");
-    	//layout.addComponent(title);
-    	//layout.setComponentAlignment(title, Alignment.MIDDLE_CENTER);
-        
+    	// Add JobForm to grid
     	grid.addComponent(form, 0, 1);
     	
+		displayPDBProfile.setWidth("700px");
+		displayPDBProfile.setHeight("750px");
+		displayPDBProfile.setSource(new ExternalResource(pdbWebAddress));
+		grid.addComponent(displayPDBProfile, 1, 1, 1, 2);
     	
-    	
+    	// Action listener for change in file selection
         form.file.addValueChangeListener(e -> {
     		String fileSelection = form.file.getValue().toString().split(" ")[0].toLowerCase();
     		if(fileSelection == "") {
     			grid.removeComponent(1, 1);
-    			String pdbWebAddress = "http://www.rcsb.org/pdb/home/home.do";
-    			BrowserFrame displayPDBProfile = new BrowserFrame();
+    			pdbWebAddress = "http://www.rcsb.org/pdb/home/home.do";
+    			displayPDBProfile = new BrowserFrame();
     			displayPDBProfile.setWidth("700px");
     			displayPDBProfile.setHeight("750px");
     			displayPDBProfile.setSource(new ExternalResource(pdbWebAddress));
@@ -86,16 +92,16 @@ public class MyUI extends UI {
     		}
     		else if(fileSelection != previousFileSelection) {
     			grid.removeComponent(1, 1);
-    			String pdbWebAddress = "http://www.rcsb.org/pdb/explore/explore.do?structureId=" + fileSelection;
-    			BrowserFrame displayPDBProfile = new BrowserFrame();
+    			pdbWebAddress = "http://www.rcsb.org/pdb/explore/explore.do?structureId=" + fileSelection;
+    			displayPDBProfile = new BrowserFrame();
     			displayPDBProfile.setWidth("700px");
     			displayPDBProfile.setHeight("750px");
     			displayPDBProfile.setSource(new ExternalResource(pdbWebAddress));
     			grid.addComponent(displayPDBProfile, 1, 1, 1, 2);
     		}
     		else {
-    			String pdbWebAddress = "http://www.rcsb.org/pdb/explore/explore.do?structureId=" + fileSelection;
-    			BrowserFrame displayPDBProfile = new BrowserFrame();
+    			pdbWebAddress = "http://www.rcsb.org/pdb/explore/explore.do?structureId=" + fileSelection;
+    			displayPDBProfile = new BrowserFrame();
     			displayPDBProfile.setWidth("700px");
     			displayPDBProfile.setHeight("750px");
     			displayPDBProfile.setSource(new ExternalResource(pdbWebAddress));
@@ -105,62 +111,79 @@ public class MyUI extends UI {
             UI.getCurrent();
     	});
     	
-    	
+        // Action listener for change in command selection
     	form.command.addValueChangeListener(e -> {
     		commandSelection = form.command.getValue().toString();
-            if (commandSelection == "MutatePDB") {
-        		grid.addComponent(mutatePDBForm, 0, 2);
-        		mutatePDBExists = true;
+            // If mutatePDB is selected, add fields from mutatePDBForm
+    		if (commandSelection == "MutatePDB") {
+            	grid.addComponent(mutatePDBForm, 0, 2);
         	}
            else if(previousCommandSelection == "MutatePDB" && commandSelection != "MutatePDB") {
             	grid.removeComponent(0, 2);
-            	job.setAminoAcidChange("");
+            	/*job.setAminoAcidChange("");
             	job.setChain("");
-            	job.setAminoAcidPosition(0);
+            	job.setAminoAcidPosition("0");*/
             }
            else if (commandSelection == "Energy" || commandSelection == "Minimize"){
-        	   	job.setAminoAcidChange("");
+        	   	/*job.setAminoAcidChange("");
            		job.setChain("");
-           		job.setAminoAcidPosition(0);
+           		job.setAminoAcidPosition("0");*/
            }
             previousCommandSelection = commandSelection;
             UI.getCurrent();
     	});
     	
-    	// Bind information entered into single Job item
-        final FieldGroup binder = new FieldGroup();
-        BeanItem<Job> item = new BeanItem<Job>(job);
-        binder.setItemDataSource(item);
-        binder.bindMemberFields(form);
-        if (form.command.getValue().toString() == "MutatePDB") {
-        	binder.bindMemberFields(mutatePDBForm);
-        }
-        
     	
-    	//layout.addComponent(form);
-    	
-    	
+    	// Action listener for change in amino acid selection
+    	mutatePDBForm.aminoAcidChange.addValueChangeListener(e -> {
+    		aminoAcidSelection = mutatePDBForm.aminoAcidChange.getValue().toString().split(" ")[0].toLowerCase();
+    	});
         
         // When save button is pressed, save user input into Job BeanItem
         Button save = new Button("Submit");
         
         save.addClickListener(e -> {
         	try {
-                
-        		//double result = ffx.numerics.Erf.erfc(1.00);
-        		//System.out.printf("XXXXXXX %f", result);
         		
-        		Label resultField = new Label("Results:\nPrint Here!");
-        		layout.addComponent(resultField);
-        		
-        		Notification notif = new Notification("Thank you!", "Your FFX job has been launched.", Notification.TYPE_WARNING_MESSAGE);
+        		Notification notif = new Notification("Thank you!", "Your FFX job has been completed.", Notification.TYPE_WARNING_MESSAGE);
         		notif.setPosition(Position.BOTTOM_RIGHT);
         		notif.show(Page.getCurrent());
-        		
-        		//String[] command = {"energy", "-Djava.awt.headless=\"true\"", "2QKI"};
-        		//Main.main(command);
-        		
-				binder.commit();
+        		if (form.commandSelection == "MutatePDB") {
+        			String[] mutatePDBcommand = {"mutatePDB", "-Djava.awt.headless=\"true\"", "-n " + aminoAcidSelection, 
+        					"-c " + job.getChain(), "-r " + job.getAminoAcidPosition(), form.file.getValue().toString().split(" ")[0].toLowerCase()};
+        			Main.main(mutatePDBcommand);
+        		}
+        		else {
+        			String[] command = {form.commandSelection.toLowerCase(), "-Djava.awt.headless=\"true\"", form.file.getValue().toString().split(" ")[0].toLowerCase()};
+        			Main.main(command);
+        		}
+        		if (form.commandSelection.equalsIgnoreCase("Energy")) {
+        				double energy = Main.mainPanel.getHierarchy().getActive().getPotentialEnergy().getTotalEnergy();
+        				Label resultLabel = new Label("Total Potential Energy:");
+        				Label energyResult = new Label(energy + "kcal/mol");
+        				subContent.addComponent(resultLabel);
+        				subContent.addComponent(energyResult);
+        				resultWindow.setContent(subContent);
+        		        
+        				// Center it in the browser window
+        		        resultWindow.center();
+
+        		        // Open it in the UI
+        		        addWindow(resultWindow);
+        		}
+        		else {
+        			Label resultLabel = new Label();
+    				resultLabel.setCaption("Your job has completed.\n"
+    						+ "Please find your files in the current working directory.");
+    				subContent.addComponent(resultLabel);
+    				resultWindow.setContent(subContent);
+    		        
+    				// Center it in the browser window
+    		        resultWindow.center();
+
+    		        // Open it in the UI
+    		        addWindow(resultWindow);
+        		}
 				
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
@@ -170,12 +193,8 @@ public class MyUI extends UI {
         
         grid.addComponent(save, 0, 3);
         grid.setSpacing(true);
-        //layout.addComponent(save);
-        //layout.setSpacing(true);
-        //layout.setComponentAlignment(save, Alignment.MIDDLE_CENTER);
         
         setContent(grid);
-        //setContent(layout);
     }
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)

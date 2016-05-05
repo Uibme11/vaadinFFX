@@ -20,17 +20,13 @@ public class MutatePDBForm extends GridLayout {
 	private Job job;
 	private MyUI myUI;
 	private TextField aminoAcidPosition = new TextField("Amino Acid Position");
+	private String aminoAcidPos = "0";
 	private TextField chain = new TextField("Chain");
-	private NativeSelect aminoAcidChange = new NativeSelect("Amino Acid Change");
+	private String chainID = "A";
+	NativeSelect aminoAcidChange = new NativeSelect("Amino Acid Change");
 	private String[] aminoAcids = {"ALA", "ARG", "ASN", "ASP", "CYS", "GLU", "GLN", "GLY", "HIS", "ILE", 
 			"LEU", "LYS", "MET", "PHE", "PRO", "SER", "THR", "TRP", "TYR", "VAL"};
-	private Button jobNameHelp = new Button();
-	private Button emailHelp = new Button();
-	private Button fileHelp = new Button();
-	private Button commandHelp = new Button();
-	private Button save = new Button("Save");
-	private Button clear = new Button("Clear");
-	//private JobForm jobForm = new JobForm();
+	private String aminoAcidSele = ""; 
 	
 	public MutatePDBForm() {
 		
@@ -39,18 +35,26 @@ public class MutatePDBForm extends GridLayout {
 		aminoAcidPosition.setRequired(true);
 		aminoAcidPosition.addValidator(new NullValidator("Must be given", false));
 		
+		// Amino acid text change listener
+		aminoAcidPosition.addTextChangeListener(e -> {
+			job.aminoAcidPosition = aminoAcidPosition.getValue();
+		});
+		
+		// Chain text change listener
+		chain.addTextChangeListener(e -> {
+			job.chain = chain.getValue();
+		});
+		
 		// Set amino acid dropdown menu
 		for (int i = 0; i < aminoAcids.length; i++){
 			aminoAcidChange.addItem(aminoAcids[i]);
 			aminoAcidChange.setItemCaption(i, aminoAcids[i]);
 		}
 		
-			aminoAcidChange.setNullSelectionAllowed(false);
-			aminoAcidChange.setRequired(true);
-			aminoAcidChange.addValidator(new NullValidator("Must be given", false));
+		aminoAcidChange.setNullSelectionAllowed(false);
+		aminoAcidChange.setRequired(true);
+		aminoAcidChange.addValidator(new NullValidator("Must be given", false));
 		
-		save.setStyleName(ValoTheme.BUTTON_PRIMARY);
-		save.setClickShortcut(KeyCode.ENTER);
 		
 		// Informational icons
 		

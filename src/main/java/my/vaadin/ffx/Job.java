@@ -15,9 +15,9 @@ private Long id;
 
 	private String command = "";
 	
-	private int aminoAcidPosition = 1;
+	String aminoAcidPosition = "";
 	
-	private String chain = "";
+	 String chain = "A";
 	
 	private String aminoAcidChange = "";
 
@@ -117,7 +117,7 @@ private Long id;
 	 *
 	 * @return the value of aminoAcidPosition
 	 */
-	public int getAminoAcidPosition() {
+	public String getAminoAcidPosition() {
 		return aminoAcidPosition;
 	}
 
@@ -127,7 +127,7 @@ private Long id;
 	 * @param aminoAcidPosition
 	 *            new value of aminoAcidPosition
 	 */
-	public void setAminoAcidPosition(int aminoAcidPosition) {
+	public void setAminoAcidPosition(String aminoAcidPosition) {
 		this.aminoAcidPosition = aminoAcidPosition;
 		System.out.println(aminoAcidPosition);
 	}
