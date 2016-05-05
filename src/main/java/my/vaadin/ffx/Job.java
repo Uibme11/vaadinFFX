@@ -15,9 +15,9 @@ private Long id;
 
 	private String command = "";
 	
-	String aminoAcidPosition = "";
+	private String aminoAcidPosition = "";
 	
-	 String chain = "A";
+	private String chain = "A";
 	
 	private String aminoAcidChange = "";
 

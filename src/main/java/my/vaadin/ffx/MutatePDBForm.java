@@ -35,16 +35,6 @@ public class MutatePDBForm extends GridLayout {
 		aminoAcidPosition.setRequired(true);
 		aminoAcidPosition.addValidator(new NullValidator("Must be given", false));
 		
-		// Amino acid text change listener
-		aminoAcidPosition.addTextChangeListener(e -> {
-			job.aminoAcidPosition = aminoAcidPosition.getValue();
-		});
-		
-		// Chain text change listener
-		chain.addTextChangeListener(e -> {
-			job.chain = chain.getValue();
-		});
-		
 		// Set amino acid dropdown menu
 		for (int i = 0; i < aminoAcids.length; i++){
 			aminoAcidChange.addItem(aminoAcids[i]);
@@ -76,5 +66,19 @@ public class MutatePDBForm extends GridLayout {
 		button.setStyleName(BaseTheme.BUTTON_LINK);
 		button.setDescription(prompt); 
 		return button;
+	}
+	
+	public String getAminoAcidPosition()
+	{
+		return aminoAcidPosition.getValue();
+	}
+	
+	public String getChain()
+	{
+		return chain.getValue();
+	}
+	
+	public String getAminoAcidChange() {
+		return aminoAcidChange.getValue().toString();
 	}
 }

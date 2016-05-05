@@ -120,14 +120,9 @@ public class MyUI extends UI {
         	}
            else if(previousCommandSelection == "MutatePDB" && commandSelection != "MutatePDB") {
             	grid.removeComponent(0, 2);
-            	/*job.setAminoAcidChange("");
-            	job.setChain("");
-            	job.setAminoAcidPosition("0");*/
             }
            else if (commandSelection == "Energy" || commandSelection == "Minimize"){
-        	   	/*job.setAminoAcidChange("");
-           		job.setChain("");
-           		job.setAminoAcidPosition("0");*/
+        	   
            }
             previousCommandSelection = commandSelection;
             UI.getCurrent();
@@ -142,6 +137,9 @@ public class MyUI extends UI {
         // When save button is pressed, save user input into Job BeanItem
         Button save = new Button("Submit");
         
+        // Boolean to disable button until all input is valid
+        
+        
         save.addClickListener(e -> {
         	try {
         		
@@ -150,7 +148,7 @@ public class MyUI extends UI {
         		notif.show(Page.getCurrent());
         		if (form.commandSelection == "MutatePDB") {
         			String[] mutatePDBcommand = {"mutatePDB", "-Djava.awt.headless=\"true\"", "-n " + aminoAcidSelection, 
-        					"-c " + job.getChain(), "-r " + job.getAminoAcidPosition(), form.file.getValue().toString().split(" ")[0].toLowerCase()};
+        					"-c " + mutatePDBForm.getChain(), "-r " + mutatePDBForm.getAminoAcidPosition(), form.file.getValue().toString().split(" ")[0].toLowerCase()};
         			Main.main(mutatePDBcommand);
         		}
         		else {
