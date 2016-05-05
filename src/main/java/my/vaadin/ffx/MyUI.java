@@ -13,15 +13,19 @@ import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.data.validator.IntegerRangeValidator;
 import com.vaadin.data.validator.NullValidator;
+import com.vaadin.server.ExternalResource;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.shared.Position;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.BrowserFrame;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Field;
 import com.vaadin.ui.FormLayout;
+import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.Notification;
@@ -43,28 +47,103 @@ import com.vaadin.ui.VerticalLayout;
 public class MyUI extends UI {
 	
 	private JobForm form = new JobForm();
+	private MutatePDBForm mutatePDBForm = new MutatePDBForm();
 	private Job job = new Job();
+	private String previousCommandSelection = "";
+	String commandSelection = "";
+	private String previousFileSelection = "";
+	boolean mutatePDBExists = true;
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
-        
+        GridLayout grid = new GridLayout(2, 4);
     	VerticalLayout layout = new VerticalLayout();
+    	
+    	Label title = new Label("Welcome to Force Field X");
+    	title.setStyleName("extra large");
+    	grid.addComponent(title, 0, 0);
+    	grid.setComponentAlignment(title, Alignment.MIDDLE_CENTER);
+    	grid.setMargin(true);
+        
     	//Label title = new Label("Force Field X");
     	//layout.addComponent(title);
     	//layout.setComponentAlignment(title, Alignment.MIDDLE_CENTER);
         
-    	layout.addComponent(form);
-    	layout.setComponentAlignment(form, Alignment.MIDDLE_CENTER);
-       
+    	grid.addComponent(form, 0, 1);
+    	
+    	
+    	
+        form.file.addValueChangeListener(e -> {
+    		String fileSelection = form.file.getValue().toString().split(" ")[0].toLowerCase();
+    		if(fileSelection == "") {
+    			grid.removeComponent(1, 1);
+    			String pdbWebAddress = "http://www.rcsb.org/pdb/home/home.do";
+    			BrowserFrame displayPDBProfile = new BrowserFrame();
+    			displayPDBProfile.setWidth("700px");
+    			displayPDBProfile.setHeight("750px");
+    			displayPDBProfile.setSource(new ExternalResource(pdbWebAddress));
+    			grid.addComponent(displayPDBProfile, 1, 1, 1, 2);
+    		}
+    		else if(fileSelection != previousFileSelection) {
+    			grid.removeComponent(1, 1);
+    			String pdbWebAddress = "http://www.rcsb.org/pdb/explore/explore.do?structureId=" + fileSelection;
+    			BrowserFrame displayPDBProfile = new BrowserFrame();
+    			displayPDBProfile.setWidth("700px");
+    			displayPDBProfile.setHeight("750px");
+    			displayPDBProfile.setSource(new ExternalResource(pdbWebAddress));
+    			grid.addComponent(displayPDBProfile, 1, 1, 1, 2);
+    		}
+    		else {
+    			String pdbWebAddress = "http://www.rcsb.org/pdb/explore/explore.do?structureId=" + fileSelection;
+    			BrowserFrame displayPDBProfile = new BrowserFrame();
+    			displayPDBProfile.setWidth("700px");
+    			displayPDBProfile.setHeight("750px");
+    			displayPDBProfile.setSource(new ExternalResource(pdbWebAddress));
+    			grid.addComponent(displayPDBProfile, 1, 1, 1, 2);
+    		}
+    		previousFileSelection = fileSelection;
+            UI.getCurrent();
+    	});
+    	
+    	
+    	form.command.addValueChangeListener(e -> {
+    		commandSelection = form.command.getValue().toString();
+            if (commandSelection == "MutatePDB") {
+        		grid.addComponent(mutatePDBForm, 0, 2);
+        		mutatePDBExists = true;
+        	}
+           else if(previousCommandSelection == "MutatePDB" && commandSelection != "MutatePDB") {
+            	grid.removeComponent(0, 2);
+            	job.setAminoAcidChange("");
+            	job.setChain("");
+            	job.setAminoAcidPosition(0);
+            }
+           else if (commandSelection == "Energy" || commandSelection == "Minimize"){
+        	   	job.setAminoAcidChange("");
+           		job.setChain("");
+           		job.setAminoAcidPosition(0);
+           }
+            previousCommandSelection = commandSelection;
+            UI.getCurrent();
+    	});
+    	
     	// Bind information entered into single Job item
         final FieldGroup binder = new FieldGroup();
         BeanItem<Job> item = new BeanItem<Job>(job);
         binder.setItemDataSource(item);
-        
         binder.bindMemberFields(form);
+        if (form.command.getValue().toString() == "MutatePDB") {
+        	binder.bindMemberFields(mutatePDBForm);
+        }
+        
+    	
+    	//layout.addComponent(form);
+    	
+    	
         
         // When save button is pressed, save user input into Job BeanItem
         Button save = new Button("Submit");
+        
         save.addClickListener(e -> {
         	try {
                 
@@ -89,11 +168,14 @@ public class MyUI extends UI {
 			}
         });
         
-        layout.addComponent(save);
-        layout.setSpacing(true);
-        layout.setComponentAlignment(save, Alignment.MIDDLE_CENTER);
+        grid.addComponent(save, 0, 3);
+        grid.setSpacing(true);
+        //layout.addComponent(save);
+        //layout.setSpacing(true);
+        //layout.setComponentAlignment(save, Alignment.MIDDLE_CENTER);
         
-        setContent(layout);
+        setContent(grid);
+        //setContent(layout);
     }
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
