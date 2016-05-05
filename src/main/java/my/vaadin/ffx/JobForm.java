@@ -38,7 +38,7 @@ public class JobForm extends GridLayout {
 	private TextField jobName = new TextField("Job Name");
 	private TextField email = new TextField("Email");
 	NativeSelect file = new NativeSelect("File");
-	private String[] fileOptions = {"5F07 (C3b)", "2QKI (C3c and compstatin)", "1A1P (compstatin)"};
+	private String[] fileOptions = {"5F07 (C3b)", "2QKI (C3c and compstatin)", "3ZD1 (C-terminus of factor H)"};
 	NativeSelect command = new NativeSelect("Command");
 	private String[] commandOptions = {"Energy", "MutatePDB", "Minimize"};
 	//private MutatePDBForm mutatePDBForm = new MutatePDBForm();
@@ -148,5 +148,27 @@ public class JobForm extends GridLayout {
 		button.setStyleName(BaseTheme.BUTTON_LINK);
 		button.setDescription(prompt); 
 		return button;
+	}
+	
+	public String getJobName() {
+		return jobName.getValue();
+	}
+	
+	public String getEmail() {
+		return email.getValue();
+	}
+	
+	public String getFile() {
+		return file.getValue().toString().split(" ")[0].toLowerCase();
+	}
+	
+	public String getCommand() {
+		if(command.getValue().toString() == "MutatePDB") {
+			String commandName = "mutatePDB";
+			return commandName;
+		}
+		else {
+			return command.getValue().toString().toLowerCase();
+		}
 	}
 }

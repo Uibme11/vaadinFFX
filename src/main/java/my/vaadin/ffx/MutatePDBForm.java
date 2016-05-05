@@ -22,7 +22,7 @@ public class MutatePDBForm extends GridLayout {
 	private TextField aminoAcidPosition = new TextField("Amino Acid Position");
 	private String aminoAcidPos = "0";
 	private TextField chain = new TextField("Chain");
-	private String chainID = "A";
+	private String chainID = "";
 	NativeSelect aminoAcidChange = new NativeSelect("Amino Acid Change");
 	private String[] aminoAcids = {"ALA", "ARG", "ASN", "ASP", "CYS", "GLU", "GLN", "GLY", "HIS", "ILE", 
 			"LEU", "LYS", "MET", "PHE", "PRO", "SER", "THR", "TRP", "TYR", "VAL"};

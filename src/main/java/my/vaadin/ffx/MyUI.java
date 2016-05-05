@@ -1,5 +1,7 @@
 package my.vaadin.ffx;
 
+import java.io.File;
+
 import javax.servlet.annotation.WebServlet;
 import ffx.numerics.Erf;
 
@@ -137,56 +139,66 @@ public class MyUI extends UI {
         // When save button is pressed, save user input into Job BeanItem
         Button save = new Button("Submit");
         
-        // Boolean to disable button until all input is valid
-        
-        
         save.addClickListener(e -> {
-        	try {
-        		
-        		Notification notif = new Notification("Thank you!", "Your FFX job has been completed.", Notification.TYPE_WARNING_MESSAGE);
+        	if(isSubmitValid()) {
+	        	save.setEnabled(true);
+        		try {
+	        		Notification notif = new Notification("Thank you!", "Your FFX job has been completed.", Notification.TYPE_WARNING_MESSAGE);
+	        		notif.setPosition(Position.BOTTOM_RIGHT);
+	        		notif.show(Page.getCurrent());
+	        		String command = form.getCommand();
+	        		if (command == "mutatePDB") {
+	        			String[] mutatePDBcommand = {command, "-Djava.awt.headless=\"true\"", "-n " + aminoAcidSelection, 
+	        					"-c " + mutatePDBForm.getChain(), "-r " + mutatePDBForm.getAminoAcidPosition().trim(), form.getFile()};
+	        			Main.main(mutatePDBcommand);
+	        		}
+	        		else {
+	        			String[] ffxCommand = {form.getCommand(), "-Djava.awt.headless=\"true\"", form.getFile()};
+	        			Main.main(ffxCommand);
+	        		}
+	        		if (command.equalsIgnoreCase("Energy")) {
+	        			double energy = Main.mainPanel.getHierarchy().getActive().getPotentialEnergy().getTotalEnergy();
+	    				Label resultLabel = new Label("Total Potential Energy:");
+	    				Label energyResult = new Label(energy + "kcal/mol");
+	    				subContent.addComponent(resultLabel);
+	    				subContent.addComponent(energyResult);
+	    				resultWindow.setContent(subContent);
+	    		        
+	    				// Center it in the browser window
+	    		        resultWindow.center();
+	
+	    		        // Open it in the UI
+	    		        addWindow(resultWindow);
+	        		}
+	        		else {
+	        			Label resultLabel = new Label();
+	    				resultLabel.setCaption("Your job has completed."
+	    						+ "Please find your files in the current working directory.");
+	    				subContent.addComponent(resultLabel);
+	    				resultWindow.setContent(subContent);
+	    		        
+	    				// Center it in the browser window
+	    		        resultWindow.center();
+	
+	    		        // Open it in the UI
+	    		        addWindow(resultWindow);
+	    		        
+	    		        // Move file to downloads
+	    		        String filename = form.getFile() + ".pdb";
+	    		        File output = new File(filename);
+	    		        output.renameTo(new File("~/Downloads/" + output.getName()));
+	        		}
+					
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+        	}
+        	else {
+        		Notification notif = new Notification("Your input is incorrect. Please review before submission.", Notification.TYPE_WARNING_MESSAGE);
         		notif.setPosition(Position.BOTTOM_RIGHT);
         		notif.show(Page.getCurrent());
-        		if (form.commandSelection == "MutatePDB") {
-        			String[] mutatePDBcommand = {"mutatePDB", "-Djava.awt.headless=\"true\"", "-n " + aminoAcidSelection, 
-        					"-c " + mutatePDBForm.getChain(), "-r " + mutatePDBForm.getAminoAcidPosition(), form.file.getValue().toString().split(" ")[0].toLowerCase()};
-        			Main.main(mutatePDBcommand);
-        		}
-        		else {
-        			String[] command = {form.commandSelection.toLowerCase(), "-Djava.awt.headless=\"true\"", form.file.getValue().toString().split(" ")[0].toLowerCase()};
-        			Main.main(command);
-        		}
-        		if (form.commandSelection.equalsIgnoreCase("Energy")) {
-        				double energy = Main.mainPanel.getHierarchy().getActive().getPotentialEnergy().getTotalEnergy();
-        				Label resultLabel = new Label("Total Potential Energy:");
-        				Label energyResult = new Label(energy + "kcal/mol");
-        				subContent.addComponent(resultLabel);
-        				subContent.addComponent(energyResult);
-        				resultWindow.setContent(subContent);
-        		        
-        				// Center it in the browser window
-        		        resultWindow.center();
-
-        		        // Open it in the UI
-        		        addWindow(resultWindow);
-        		}
-        		else {
-        			Label resultLabel = new Label();
-    				resultLabel.setCaption("Your job has completed.\n"
-    						+ "Please find your files in the current working directory.");
-    				subContent.addComponent(resultLabel);
-    				resultWindow.setContent(subContent);
-    		        
-    				// Center it in the browser window
-    		        resultWindow.center();
-
-    		        // Open it in the UI
-    		        addWindow(resultWindow);
-        		}
-				
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+        	}
         });
         
         grid.addComponent(save, 0, 3);
@@ -198,5 +210,38 @@ public class MyUI extends UI {
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
     @VaadinServletConfiguration(ui = MyUI.class, productionMode = false)
     public static class MyUIServlet extends VaadinServlet {
+    }
+    
+    public boolean isSubmitValid() {
+    	if(isFormValid()){
+    		if(form.getCommand() == "mutatePDB") {
+    			if(isMutatePDBFormValid()) {
+    				return true;
+    			}
+    		}
+    		else {
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    
+    public boolean isFormValid() {
+    	if(form.getJobName() != "" && form.getEmail() != "" && 
+    			form.getFile() != "" && form.getCommand() != "") {
+    		return true;
+    	}
+    	else {
+    		return false;
+    	}
+    }
+    
+    public boolean isMutatePDBFormValid() {
+    	if(mutatePDBForm.getAminoAcidPosition() != "" && mutatePDBForm.getAminoAcidChange() != "") {
+    		return true;
+    	}
+    	else {
+    		return false;
+    	}
     }
 }
