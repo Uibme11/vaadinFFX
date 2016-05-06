@@ -176,10 +176,8 @@ public class MyUI extends UI {
 	    		        addWindow(resultWindow);
 	        		}
 	        		else {
-	        			Label resultLabel1 = new Label("Your job has completed.");
-	        			Label resultLabel2 = new Label(" Please find your files in the pwd.");
-	    				subContent.addComponent(resultLabel1);
-	    				subContent.addComponent(resultLabel2);
+	        			Label resultLabel = new Label("Your FFX job has been completed. You can find the output in the present working directory.");
+	    				subContent.addComponent(resultLabel);
 	    				subContent.setWidth("300px");
 	    				subContent.setHeight("100px");
 	    				subContent.setMargin(true);
