@@ -1,5 +1,6 @@
 package my.vaadin.ffx;
 
+
 import java.io.File;
 
 import javax.servlet.annotation.WebServlet;
@@ -12,6 +13,7 @@ import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.annotations.Widgetset;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.data.util.FilesystemContainer.FileItem;
 import com.vaadin.data.validator.EmailValidator;
 import com.vaadin.data.validator.IntegerRangeValidator;
 import com.vaadin.data.validator.NullValidator;
@@ -162,6 +164,9 @@ public class MyUI extends UI {
 	    				Label energyResult = new Label(energy + "kcal/mol");
 	    				subContent.addComponent(resultLabel);
 	    				subContent.addComponent(energyResult);
+	    				subContent.setWidth("300px");
+	    				subContent.setHeight("100px");
+	    				subContent.setMargin(true);
 	    				resultWindow.setContent(subContent);
 	    		        
 	    				// Center it in the browser window
@@ -171,10 +176,13 @@ public class MyUI extends UI {
 	    		        addWindow(resultWindow);
 	        		}
 	        		else {
-	        			Label resultLabel = new Label();
-	    				resultLabel.setCaption("Your job has completed."
-	    						+ "Please find your files in the current working directory.");
-	    				subContent.addComponent(resultLabel);
+	        			Label resultLabel1 = new Label("Your job has completed.");
+	        			Label resultLabel2 = new Label(" Please find your files in the pwd.");
+	    				subContent.addComponent(resultLabel1);
+	    				subContent.addComponent(resultLabel2);
+	    				subContent.setWidth("300px");
+	    				subContent.setHeight("100px");
+	    				subContent.setMargin(true);
 	    				resultWindow.setContent(subContent);
 	    		        
 	    				// Center it in the browser window
@@ -182,11 +190,6 @@ public class MyUI extends UI {
 	
 	    		        // Open it in the UI
 	    		        addWindow(resultWindow);
-	    		        
-	    		        // Move file to downloads
-	    		        String filename = form.getFile() + ".pdb";
-	    		        File output = new File(filename);
-	    		        output.renameTo(new File("~/Downloads/" + output.getName()));
 	        		}
 					
 				} catch (Exception e1) {
